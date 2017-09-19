@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Data;
 using System.Collections.Generic;
 using SuperSocket.WebSocket;
@@ -51,7 +52,7 @@ namespace CmstService.SocketServer
                         subscriptionList.Remove(item);
                     }
                 }
-
+                
                 // 检测用户字段、密码字段
                 if (!userInfo.Columns.Contains(jsonConf.SystemConfig.UserField) || !userInfo.Columns.Contains(jsonConf.SystemConfig.KeyField) || subscriptionList.Count < 1)
                 {
@@ -117,7 +118,7 @@ namespace CmstService.SocketServer
         public string Group { get; internal set; }
 
         // 客户端密钥，用于客户端不支持本地存储时临时存在服务器
-        public string Token { internal get; internal set; }
+        public string Token { get; internal set; }
 
         // 用户订阅列表
         public List<string> SubscriptionList { get; internal set; }

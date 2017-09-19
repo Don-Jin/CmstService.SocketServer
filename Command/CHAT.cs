@@ -12,7 +12,7 @@ namespace CmstService.SocketServer.Command
         // 命令主执行过程
         protected override void ExecuteJsonCommand(CmstSession session, ChatMessage commandInfo)
         {
-            CmstServer server = session.AppServer;
+            /*CmstServer server = session.AppServer;
             // 设置消息属性
             commandInfo.SendTime = DateTime.Now;
 
@@ -20,7 +20,7 @@ namespace CmstService.SocketServer.Command
             foreach (CmstSession receiveSession in server.GetSessions(s => s.Name == commandInfo.Receiver))
             {
                 receiveSession.Send(server.JsonSerialize(new Message(commandInfo)));
-            }
+            }*/
         }
     }
 }

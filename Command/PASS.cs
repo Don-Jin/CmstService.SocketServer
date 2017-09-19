@@ -35,7 +35,12 @@ namespace CmstService.SocketServer.Command
                         
                         // 将令牌临时保留到服务器，以免客户端不支持本地存储时页面跳转登录失效
                         server.UserInfo[commandInfo.User].Token = token;
-                        
+                        session.Send(server.JsonSerialize(new Success(new SessionMessage() { 
+                            Token = token,
+                            User = session.User,
+                            Name = server.UserInfo[session.User].Name,
+                            SubscriptionList = server.UserInfo[session.User].SubscriptionList
+                        }, "登录成功！")));
                         break;
                     case "logout":
 

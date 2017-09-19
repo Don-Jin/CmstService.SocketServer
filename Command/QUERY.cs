@@ -14,14 +14,14 @@ namespace CmstService.SocketServer.Command
         {
             try
             { 
-                if ()
+                /*if ()
                 {
                 
                 }
 
                 DataSet dataSet = new DataSet();
                 dataSet.Tables.Add(session.AppServer.DBHelper.ExcuteQuery(commandInfo.Database, commandInfo.Query, commandInfo.Range));
-                session.Send(JsonConvert.SerializeObject(dataSet));
+                session.Send(JsonConvert.SerializeObject(dataSet));*/
             }
             catch (Exception e) { session.Send(e.Message); }
         }

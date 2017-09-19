@@ -11,7 +11,26 @@ namespace CmstService.SocketServer.Command
     {
         protected override void ExecuteJsonCommand(CmstSession session, FunctionMessage commandInfo)
         {
-            throw new NotImplementedException();
+            CmstServer server = session.AppServer;  // 会话所在服务器
+
+            try
+            {
+                // 没有令牌，或令牌无效
+                if (!Utility.IsLogin(session.User, session.RemoteEndPoint.Address.ToString(), commandInfo.Token)) 
+                {
+                    throw new Exception("与服务器的通信验证未通过，可尝试重新登录！");
+                }
+
+                session.Send(ReflectionHelper.MethodInvoke(new MethodConfig()
+                {
+                    DatabaseName = commandInfo.DatabaseName,
+                    AssemblyName = commandInfo.AssemblyName,
+                    MethodName = commandInfo.MethodName
+                }, new ArgumentConfig() { 
+                    Arguments = commandInfo.Arguments
+                }));
+            }
+            catch (Exception e) { session.Send(server.JsonSerialize(new Error("CallError", e.Message))); }
         }
     }
 }

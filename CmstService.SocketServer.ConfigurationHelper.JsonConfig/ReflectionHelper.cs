@@ -40,11 +40,11 @@ namespace CmstService.SocketServer.ConfigurationHelper.JsonConfig
             {
                 throw new FileNotFoundException("服务器所依赖的配置文件不存在，请联系管理员修复！");
             }
-
+            
             string jsonContents = File.ReadAllText(jsonFile);
-
+                
             // 文件内容不为空则继续处理
-            if (jsonContents.Length > 0) 
+            if (jsonContents.Length > 0)
             {
                 m_JsonConfig = JsonConvert.DeserializeObject<JsonConfig>(jsonContents);
 
@@ -55,12 +55,13 @@ namespace CmstService.SocketServer.ConfigurationHelper.JsonConfig
                         SqlAssembly sa = dbconf.SqlAssemblies[key];
                         Assembly asm = Assembly.Load(sa.Assembly);
                         m_Assemblies.Add(key, asm);
-
+                            
                         // 部分程序集可能需要初始化
                         if (sa.HasInitial())
                         {
                             foreach (InitialInfo iinfo in sa.Initial)
                             {
+
                                 switch (iinfo.Type)
                                 {
                                     case "field":
@@ -97,11 +98,18 @@ namespace CmstService.SocketServer.ConfigurationHelper.JsonConfig
                 // 实例化该参数类
                 List<object> argInstance = new List<object>();
 
+                // 参数遍历索引
+                int argIndex = 0;
+
+                // 处理参数
                 foreach (ArgumentInfo argInfo in method.Arguments)
                 {
                     // 1.如果 properties 为空，则说明是系统原生结构，如：System.Int32、System.String等
                     // 2.如果不为空，则说明需要实例化该类，然后把值赋给对应 properties 中的属性名
                     Type m_Type = null;
+
+                    // 当前待处理参数
+                    object m_arg = null;
 
                     if (argInfo.Properties.Length > 0)
                     {
@@ -110,23 +118,34 @@ namespace CmstService.SocketServer.ConfigurationHelper.JsonConfig
                         // 实例化该参数类
                         object instance = Activator.CreateInstance(m_Type);
 
-                        for (int i = 0, len = argInfo.Properties.Length; i < len; i++)
+                        foreach (string propName in argInfo.Properties)
                         {
-                            m_Type.GetProperty(argInfo.Properties[i]).SetValue(instance, args[i], null);
+                            PropertyInfo prop = m_Type.GetProperty(propName);
+                            m_arg = args[argIndex++];
+                            if (m_arg != null && !m_arg.GetType().Equals(prop.PropertyType))
+                            {
+                                m_arg = Convert.ChangeType(m_arg, prop.PropertyType);
+                            }
+                            prop.SetValue(instance, m_arg, null);
                         }
-                        
+
                         argInstance.Add(instance);
                     }
                     else
                     {
                         m_Type = Type.GetType(argInfo.Class);
-                        argInstance.Add(args[0]);
+                        m_arg = args[argIndex++];
+                        if (m_arg != null && !m_arg.GetType().Equals(m_Type))
+                        {
+                            m_arg = Convert.ChangeType(m_arg, m_Type);
+                        }
+                        argInstance.Add(m_arg);
                     }
                     
                     // 添加到参数列表
                     m_params.Add(m_Type);
                 }
-
+                
                 if (func == null)
                 {
                     func = m_Assemblies[methodConf.AssemblyName].GetType(method.Class).GetMethod(method.Method, m_params.ToArray());

@@ -78,15 +78,9 @@
     <Compile Include="CmstServer.cs" />
     <Compile Include="CmstSession.cs" />
     <Compile Include="Command\CALL.cs" />
-    <Compile Include="Command\NONQUERY.cs" />
-    <Compile Include="Command\LOGIN.cs" />
     <Compile Include="Command\PASS.cs" />
     <Compile Include="Command\QUERY.cs" />
-    <Compile Include="Command\LOGOUT.cs" />
     <Compile Include="Command\CHAT.cs" />
-    <Compile Include="Command\SIGNUP.cs" />
-    <Compile Include="Command\SIGNIN.cs" />
-    <Compile Include="Command\MULTIQUERY.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>

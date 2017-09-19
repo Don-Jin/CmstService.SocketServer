@@ -98,17 +98,17 @@ namespace CmstService.SocketServer
         }
 
         // 根据AES加密子串，匹配登录状态
-        // 加密算法：AES (IP + '|' + USER)
-        // 参数 match 即为 + '|' + USER
-        public static bool IsLogin(string match, string encrypt) 
+        // 加密算法：AES (USER + '|' + DATE + '|' + IP)
+        public static bool IsLogin(string user, string ip, string encrypt) 
         {
-            if (string.IsNullOrWhiteSpace(match) || string.IsNullOrWhiteSpace(encrypt))
+            if (string.IsNullOrEmpty(encrypt))
             {
                 return false;
             }
             try
             {
-                return AESCryptography(encrypt, false).Equals(match);
+                string[] decrypt = AESCryptography(encrypt, false).Split('|');
+                return decrypt[0].Equals(user) && decrypt[2].Equals(ip);
             }
             catch { return false; }
         }
